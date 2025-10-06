@@ -1,0 +1,260 @@
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>ShapeGen4D: Towards High Quality 4D Shape Generation from Videos</title>
+  <link href="./files/style.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+  <style>
+    .divider {
+      border-right: 2px dashed #737373;
+      width: 2px;
+    }
+  </style>
+  <style>
+    .divider_horizontal {
+      border-top: 2px dashed #737373;
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+    }
+  </style>
+
+<style>
+  body {
+    padding: 2em;
+    /* font-family: sans-serif; */
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;;
+  }
+
+  iframe {
+    border-radius: 0.5em;
+    width: 27.5em;
+    height: 27.5em;
+    border: none;
+    box-shadow: 0 0 1em 0em rgba(0, 0, 0, 0.15);
+  }
+
+  @media (max-width: 768px) {
+    iframe {
+      width: 100%;
+      height: 30em;
+    }
+  }
+
+  a,
+  a:link {
+    color: #777;
+  }
+
+  /* Styles for the instruction icons and text */
+  .instructions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.2em;
+    text-align: center;
+    padding: 0.6em;
+  }
+
+  .instruction-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: 1.2em;
+  }
+
+  .instruction-item img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .instructions_small {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1em;
+    text-align: center;
+    padding: 0.5em;
+  }
+
+  .instruction-item_small {
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+    font-size: 1.0em;
+  }
+
+  .instruction-item_small img {
+    width: 30px;
+    height: 30px;
+  }
+</style>
+
+</head>
+
+<body>
+  <div class="content">
+    <h1 style="line-height: 1.2;">
+      <strong>ShapeGen4D: Towards High Quality 4D Shape Generation from Videos</strong>
+    </h1>
+    <p id="authors">
+      <span>
+        <a href="https://domejiraphon.github.io/">Jiraphon Yenphraphai<sup>1,2</sup></a>
+      </span>
+      <span>
+        <a href="https://ashmrz.github.io/">Ashkan Mirzaei<sup>1</sup></a>
+      </span>
+      <span>
+        <a href="https://windvchen.github.io/">Jianqi Chen<sup>3</sup></a>
+      </span>
+      <span>
+        <a href="https://www.linkedin.com/in/jiaxu-zou/">Jiaxu Zou<sup>1</sup></a>
+      </span>
+      <br>
+      <span>
+        <a href="http://www.stulyakov.com/">Sergey Tulyakov<sup>1</sup></a>
+      </span>
+      <span>
+        <a href="https://raymond-yeh.com/">Raymond A. Yeh<sup>2</sup></a>
+      </span>
+      <span>
+        <a href="https://peterwonka.net/">Peter Wonka<sup>1,3</sup></a>
+      </span>
+        <a href="https://mightychaos.github.io/">Chaoyang Wang<sup>1</sup></a>
+      </span>
+      <br>
+      <span class="institution">
+        <a href="https://research.snap.com/"><sup>1</sup> Snap</a>
+        <a href="https://www.cs.purdue.edu/"><sup>2</sup> Purdue University</a>
+        <a href="https://cs.kaust.edu.sa/"><sup>3</sup> KAUST</a>
+      </span>
+      <font size="+2">
+        <p style="text-align: center;">
+          <a href="https://arxiv.org/abs/2410.24211" target="_blank">[ArXiv]</a> &nbsp;&nbsp;&nbsp;&nbsp;
+        </p>
+      </font>
+    </p>
+    <br>
+    <center>
+      <div class="video-container">
+      <video class='round' autoplay muted loop playsinline style='width: 800px' src='assets/teaser4.mp4'></video>
+      </div>
+    </center>
+
+
+    <br>
+    <center>
+      <h4>ShapeGen4D generates high quality mesh sequences from input monocular videos.</h4>
+    </center>
+
+  </div>
+  <div class="content">
+    <h2 style="text-align:left;"><strong>Abstract</strong></h2>
+      <p>
+        We introduce a native video-to-4D shape framework that synthesizes a single dynamic 
+        3D representation end-to-end from the video. Our framework introduces
+        three key components based on large-scale pre-trained 3D models:
+      </p>
+    <ol style="padding-left: 1.5em;">
+      <li>A temporal attention that conditions generation on all frames while producing a time-indexed
+          dynamic representation.</li>
+      <li>A time-aware point sampling and 4D latent anchoring
+          that promote temporally consistent geometry and texture.</li>
+      <li>Noise sharing across frames to enhance temporal stability.</li>
+    </ol>
+    <p>
+      Our method accurately captures non-rigid motion, volume changes, and even topological transitions without per-frame
+      optimization. Across diverse in-the-wild videos, our method improves robustness
+      and perceptual fidelity and reduces failure modes compared with the baselines.
+    </p>
+  </div>
+
+
+  
+  <div class="content">
+    <h2 style="text-align:left;"><strong>Method</strong></h2>
+    <br>
+    <img class="summary-img" src="./assets/method_v4.jpg" style="width:100%;margin-bottom: -10px;">
+    <p>
+      We present a flow-based latent diffusion model that generates mesh sequences capturing dynamic object motion, 
+      conditioned on a monocular video. 
+      Specifically, this involves extracting temporally-aligned latents by querying at the same surface location and introducing 
+      a spatiotemporal transformer for processing the sequence of frames. 
+    </p>
+  </div>
+
+  <div class="content">
+    <h2 style="text-align:left;"><strong>Comparisons</strong></h2>
+    <p>
+      Our method produces high-quality meshes, maintains consistent poses, and exhibits substantially less temporal jitter.
+    </p>
+    <tr>
+      <center>
+        <div class="video-container">
+      <video class='round' autoplay muted loop playsinline style='width: 1000px' src='assets/comparison.mp4'></video>
+      </div>
+      </center>
+    </tr>
+    <br>
+  </div>
+<div class="content">
+  <h2 style="text-align:left;"><strong>Citation</strong></h2>
+<pre style="background-color:#f5f5f5; padding:0px; border-radius:0px; margin:0;">
+<code class="bibtex" style="font-size:0.8em; color:#333;">
+  @article{ShapeGen4D,
+      title={ShapeGen4D: Towards High Quality 4D Shape Generation from Videos},
+      author={Jiraphon Yenphraphai and Ashkan Mirzaei and Jianqi Chen and Jiaxu Zou
+          and Sergey Tulyakov and Raymond A. Yeh and Peter Wonka and Chaoyang Wang},
+      year={2025},
+      journal={arXiv preprint},
+  }
+  </code></pre>
+</div>
+
+
+<footer class="footer">
+  <div class="content">
+    <p>
+      <strong>Acknowledgements:</strong> We borrow this template from <a href="https://snap-research.github.io/DELTA/">Delta</a>.
+      We thank Avalon Vinella for assistance in preparing the Objaverse dataset. We are also grateful to Willi Menapace for his advice on training the Flux model.  
+      Finally, we thank Gleb Dmukhin, Hao Zhang, Michael Vasilkovsky, Sergei Korolev, and Vladislav Shakhray for their valuable discussions and support.
+    </p>
+
+  </div>
+</footer>
+
+<script>
+  // Get the video element
+  var video = document.getElementById("short_video");
+
+  // Set the loop attribute to ensure continuous looping
+  video.loop = true;
+
+  // Set the playback range between frames 0 and 100
+  var startFrame = 0;
+  var endFrame = 1;
+
+  // Listen for the "timeupdate" event to continuously check the playback position
+  video.addEventListener("timeupdate", function() {
+      // Check if the current time is beyond the specified range
+      if (video.currentTime > endFrame) {
+          // Set the playback position back to the start frame
+          video.currentTime = startFrame;
+      }
+  });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+<script>
+  new ClipboardJS('.button-clipboard').on('success', function(e) {
+    const tooltip = e.trigger.querySelector('.button-clipboard-tooltip');
+    tooltip.style.visibility = 'visible';
+    setTimeout(() => { tooltip.style.visibility = 'hidden'; }, 1000);
+    e.clearSelection();
+  });
+</script>
+
+</body>
+</html>
